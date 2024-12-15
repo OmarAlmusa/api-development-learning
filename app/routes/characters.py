@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.get('/', response_model=list[schemas.get_character])
+@router.get('/', response_model=list[schemas.get_character_with_votes])
 def get_characters(session: SessionDep,
                    offset: int = 0,
                    limit: Annotated[int, Query(le=100)] = 100):
@@ -27,14 +27,14 @@ def get_characters(session: SessionDep,
     # print(query)
 
     db_characters = session.exec(query).all()
-    response = [schemas.get_character.model_validate({
+    response = [schemas.get_character_with_votes.model_validate({
         **character.dict(),
         "user": schemas.GetUserForCharacter.model_validate(user.dict()),
         "votes": votes
     }) for character, votes, user in db_characters]
     return response
 
-@router.get('/{character_id}', response_model=schemas.get_character)
+@router.get('/{character_id}', response_model=schemas.get_character_with_votes)
 def get_single_character(character_id: int, session: SessionDep):
     # character = session.get(tables.Characters, character_id)
     # if not character:
@@ -54,7 +54,7 @@ def get_single_character(character_id: int, session: SessionDep):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Character not found")
     character, votes, user = db_character
     
-    character_data = schemas.get_character.model_validate({
+    character_data = schemas.get_character_with_votes.model_validate({
         **character.dict(),
         "user": schemas.GetUserForCharacter.model_validate(user.dict()) if user else None,
         "votes": votes

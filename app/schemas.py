@@ -45,6 +45,11 @@ class get_character(CharacterBase):
     id: int
     createdAt: datetime
     user: Optional["GetUserForCharacter"]
+
+class get_character_with_votes(CharacterBase):
+    id: int
+    createdAt: datetime
+    user: Optional["GetUserForCharacter"]
     votes: int
 
 class get_characters_for_single_user(CharacterBase):
