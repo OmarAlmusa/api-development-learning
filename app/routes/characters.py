@@ -57,8 +57,8 @@ def get_single_character(character_id: int, session: SessionDep):
     character, votes, user = db_character
     
     character_data = schemas.get_character_with_votes.model_validate({
-        **character.dict(),
-        "user": schemas.GetUserForCharacter.model_validate(user.dict()) if user else None,
+        **character.model_dump(),
+        "user": schemas.GetUserForCharacter.model_validate(user.model_dump()) if user else None,
         "votes": votes
     })
 
