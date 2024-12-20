@@ -1,5 +1,5 @@
-from fastapi import HTTPException, status, Query, APIRouter
-from .. import schemas, utilities, tables
+from fastapi import HTTPException, status, Query, APIRouter, Depends
+from .. import schemas, utilities, tables, oauth2
 from ..postgres_ORM import SessionDep
 from typing import Annotated
 from sqlmodel import select
@@ -52,10 +52,14 @@ def get_single_user(user_id: int, session:SessionDep):
     return db_user
 
 @router.patch('/{user_id}', response_model=schemas.GetUser)
-def update_user(user_id: int, user: schemas.UpdateUser, session: SessionDep):
+def update_user(user_id: int, user: schemas.UpdateUser, session: SessionDep, current_user: int = Depends(oauth2.get_current_user)):
     db_user = session.get(tables.Users, user_id)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {user_id} is not found")
+    
+    if db_user.id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"You are not allowed to update user with id: {user_id}")
+    
     user_data = user.model_dump(exclude_unset=True)
     db_user.sqlmodel_update(user_data)
     session.add(db_user)

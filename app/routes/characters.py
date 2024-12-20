@@ -23,13 +23,14 @@ def get_characters(session: SessionDep,
         .join(tables.Votes, tables.Votes.character_id == tables.Characters.id, isouter=True)
         .join(tables.Users, tables.Characters.user_id == tables.Users.id, isouter=True)
         .group_by(tables.Characters.id, tables.Users.id)
+        .order_by(tables.Characters.createdAt)
     )
     # print(query)
 
     db_characters = session.exec(query).all()
     response = [schemas.get_character_with_votes.model_validate({
-        **character.dict(),
-        "user": schemas.GetUserForCharacter.model_validate(user.dict()),
+        **character.model_dump(),
+        "user": schemas.GetUserForCharacter.model_validate(user.model_dump()),
         "votes": votes
     }) for character, votes, user in db_characters]
     return response
@@ -47,6 +48,7 @@ def get_single_character(character_id: int, session: SessionDep):
         .join(tables.Users, tables.Characters.user_id == tables.Users.id, isouter=True)
         .where(tables.Characters.id == character_id)
         .group_by(tables.Characters.id, tables.Users.id)
+        .order_by(tables.Characters.createdAt)
     )
 
     db_character = session.exec(query).first()
@@ -62,7 +64,7 @@ def get_single_character(character_id: int, session: SessionDep):
 
     return character_data
 
-@router.post('/', response_model=schemas.get_character)
+@router.post('/', response_model=schemas.get_character, status_code=status.HTTP_201_CREATED)
 def create_character(character: schemas.CharacterBase, session: SessionDep, current_user: int = Depends(oauth2.get_current_user)):
     character_data = character.model_dump()
     db_character = tables.Characters(**character_data, user_id = current_user.id)

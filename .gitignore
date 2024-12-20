@@ -3,3 +3,4 @@ venv
 __pycache__
 Extras
 app/static
+.pytest_cache

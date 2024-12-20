@@ -1,13 +1,7 @@
 from typing import Annotated
-
-from fastapi import Depends, FastAPI, HTTPException, Query
-from psycopg import connect
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from fastapi import Depends
+from sqlmodel import Session, SQLModel, create_engine
 from .config import settings
-# import os
-# from dotenv import load_dotenv
-
-# load_dotenv(dotenv_path="app/.env")
 
 user = settings.database_user
 name = settings.database_name
