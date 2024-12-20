@@ -7,7 +7,8 @@ on:
 
 jobs:
   first-job:
-  
+    runs-on: ubuntu-latest
+
     environment:
       name: api-dev-env
     env:
@@ -20,7 +21,25 @@ jobs:
       ALGORITHM: ${{secrets.ALGORITHM}}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
       
-    runs-on: ubuntu-latest
+    services:
+
+      postgres:
+          # Docker Hub image
+          image: postgres
+          #env
+          env:
+            POSTGRES_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+            POSTGRES_DB: ${{secrets.DATABASE_NAME}}_test
+          ports:
+            - 5432:5432
+          # Set health checks to wait until postgres has started
+          options: >-
+            --health-cmd pg_isready
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+    
+      
     steps:
       - name: pulling git repo
         uses: actions/checkout@v4
