@@ -1,4 +1,3 @@
-from pydoc import cli
 from fastapi import HTTPException, status
 from fastapi.testclient import TestClient
 from app.main import app

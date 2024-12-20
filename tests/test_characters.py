@@ -1,7 +1,7 @@
-from .setting_db import client_fixture, session_fixture, test_users, create_users_fixture, login_user_fixture, create_characters_fixture, test_characters
 from fastapi.testclient import TestClient
 from app import schemas
 import pytest
+from .conftest import test_characters
 
 
 
@@ -41,6 +41,7 @@ def test_create_character(client: TestClient, login_user):
     new_character = schemas.get_character(**response.json())
     
     assert response.status_code == 201
+    assert new_character.name == json_data["name"]
     assert new_character.user.id == 1
 
 

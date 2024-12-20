@@ -1,7 +1,7 @@
-from .setting_db import client_fixture, session_fixture, test_users, create_users_fixture, login_user_fixture
 from fastapi.testclient import TestClient
 from app import schemas
 import pytest
+from .conftest import test_users
 
 def test_create_user(client: TestClient):
     json_data = {

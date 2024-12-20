@@ -1,7 +1,4 @@
-from urllib import response
-from .setting_db import client_fixture, session_fixture, test_users, create_users_fixture, login_user_fixture, create_characters_fixture, test_characters
 from fastapi.testclient import TestClient
-from app import schemas
 import pytest
 
 
