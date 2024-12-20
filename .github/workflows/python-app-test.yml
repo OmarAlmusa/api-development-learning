@@ -17,6 +17,25 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      image: postgres
+
+      env:
+        database_hostname: ${{api-dev-env.DATABASE_HOSTNAME}}
+        database_password: ${{api-dev-env.DATABASE_PASSWORD}}
+        database_user: ${{api-dev-env.DATABASE_USER}}
+        database_name: ${{api-dev-env.DATABASE_NAME}}
+        database_port: ${{api-dev-env.DATABASE_PORT}}
+        secret_key: ${{api-dev-env.SECRET_KEY}}
+        algorithm: ${{api-dev-env.ALGORITHM}}
+        access_token_expire_minutes: ${{api-dev-env.ACCESS_TOKEN_EXPIRE_MINUTES}}
+
+      options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.12.2
